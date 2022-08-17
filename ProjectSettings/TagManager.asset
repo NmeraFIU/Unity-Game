@@ -8,14 +8,14 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Grid
   - Water
   - UI
+  - NPC
   - 
   - 
   - 
-  - 
-  - 
+  - Player
   - 
   - 
   - 
