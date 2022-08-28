@@ -4,40 +4,55 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Rigidbody2D rigidbody2d;
-    public float speed = 3.0f;
+    private Rigidbody2D rb;
 
-    float horizontal;
-    float vertical;
+    private Vector3 respawnPoint;
+    public GameObject damageDetector;
 
-    Vector2 movement;
-    Vector2 lookDirection = new Vector2(1, 0);
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        respawnPoint = transform.position;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        float dirX = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector3(dirX * 5f, rb.velocity.y);
 
-        //talk to NPC
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetButtonDown("Jump"))
         {
-            RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
-            if (hit.collider != null)
-            {
-                Debug.Log("Raycast has hit the object " + hit.collider.gameObject);
-                NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
-                if (character != null)
-                {
-                    Debug.Log("Inside if statement");
-                    character.DisplayDialog();
-                }
-            }
+            rb.velocity = new Vector3(0, 7f, 0);
+        }
+        if (Input.GetButtonUp("Jump"))
+        {
+            rb.velocity = new Vector3(0, -2f, 0);
         }
     }
 
-    void FixedUpdate()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        rigidbody2d.MovePosition(rigidbody2d.position + movement * speed * Time.fixedDeltaTime);
+        if (collision.gameObject.CompareTag("Damage"))
+        {
+            Debug.Log("You died!");
+            transform.position = respawnPoint;
+        } else if (collision.gameObject.CompareTag("Checkpoint"))
+        {
+            Debug.Log(collision.gameObject.transform.position);
+            Debug.Log("Checkpoint reached!");
+            respawnPoint = collision.gameObject.transform.position;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Checkpoint"))
+        {
+            Debug.Log(collision.gameObject.transform.position);
+            Debug.Log("Checkpoint reached!");
+            respawnPoint = collision.gameObject.transform.position;
+        }
     }
 }
