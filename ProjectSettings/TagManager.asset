@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Checkpoint
   - Damage
+  - BarrierR
+  - BarrierL
+  - BarrierU
+  - BarrierD
   layers:
   - Default
   - TransparentFX
